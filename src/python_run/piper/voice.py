@@ -127,6 +127,7 @@ class PiperVoice:
         self,
         text: str,
         wav_file: wave.Wave_write,
+        phoneme_input: bool,
         speaker_id: Optional[int] = None,
         length_scale: Optional[float] = None,
         noise_scale: Optional[float] = None,
@@ -141,6 +142,7 @@ class PiperVoice:
 
         for audio_bytes in self.synthesize_stream_raw(
             text,
+            phoneme_input=phoneme_input,
             speaker_id=speaker_id,
             length_scale=length_scale,
             noise_scale=noise_scale,
@@ -153,6 +155,7 @@ class PiperVoice:
     def synthesize_stream_raw(
         self,
         text: str,
+        phoneme_input: bool,
         speaker_id: Optional[int] = None,
         length_scale: Optional[float] = None,
         noise_scale: Optional[float] = None,
@@ -161,8 +164,10 @@ class PiperVoice:
         alignment_data: Optional[list] = None
     ) -> Iterable[bytes]:
         """Synthesize raw audio per sentence from text."""
-        sentence_phonemes = self.phonemize(text)
-
+        if phoneme_input:
+            sentence_phonemes = [list(text)]
+        else:
+            sentence_phonemes = self.phonemize(text)
         # 16-bit mono
         num_silence_samples = int(sentence_silence * self.config.sample_rate)
         silence_bytes = bytes(num_silence_samples * 2)
