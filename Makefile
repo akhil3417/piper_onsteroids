@@ -3,9 +3,7 @@
 all:
 	cmake -Bbuild -DCMAKE_INSTALL_PREFIX=install
 	cmake --build build --config Release
-	@if [ "$(OS)" != "Windows_NT" ]; then \
-        cd build && ctest --config Release; \
-    fi
+	cd build && ctest --config Release
 	cmake --install build
 
 docker:
